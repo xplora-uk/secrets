@@ -2,6 +2,21 @@
 
 use AWS SDK and read settings from Secrets Manager
 
+It covers two scenarios:
+
+A:
+
+The secret `my_app` is already loaded into `process.env` e.g. in an AWS ECS container.
+`process.env.my_app` is `{ "DB_PASS": "secretPassword" }`
+
+Then, `result.data` is an object based on `JSON.parse(process.env.my_app)`.
+
+B:
+
+The secret is not in `process.env` but only in AWS Secrets Manager.
+
+Then, `result.data` is an object based on `JSON.parse(secret)` the secret found on AWS.
+
 ## DEV
 
 Check code inside `src`.
@@ -28,6 +43,7 @@ Sample:
 AWS_ACCESS_KEY_ID="key"
 AWS_SECRET_ACCESS_KEY="secret"
 AWS_REGION="eu-central-1"
+my_app='{ "PASSWORD": "pass1234" }'
 ```
 
 Run tests:
@@ -41,18 +57,26 @@ npm run test:coverage
 Current code coverage:
 
 ```plain
+  secrets reader for AWS
+    ✔ should read existing secret in AWS (222ms)
+    ✔ should read existing secret in env
+    ✔ should fail to read invalid secret (149ms)
+
+
+  3 passing (376ms)
+
 -------------------|---------|----------|---------|---------|-------------------
 File               | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s 
 -------------------|---------|----------|---------|---------|-------------------
-All files          |   93.54 |    68.42 |     100 |   93.33 |                   
+All files          |   94.28 |    74.07 |     100 |   94.11 |                   
  src               |     100 |      100 |     100 |     100 |                   
   types.ts         |     100 |      100 |     100 |     100 |                   
  src/secrets       |    92.3 |       60 |     100 |    92.3 |                   
   constants.ts     |     100 |      100 |     100 |     100 |                   
   factory.ts       |      90 |       60 |     100 |      90 | 20                
   index.ts         |     100 |      100 |     100 |     100 |                   
- src/secrets/kinds |   93.75 |    66.66 |     100 |   93.33 |                   
-  aws.ts           |   93.75 |    66.66 |     100 |   93.33 | 28                
+ src/secrets/kinds |      95 |       75 |     100 |   94.73 |                   
+  aws.ts           |      95 |       75 |     100 |   94.73 | 38                
 -------------------|---------|----------|---------|---------|-------------------
 ```
 

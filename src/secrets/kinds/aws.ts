@@ -13,19 +13,30 @@ export function newAwsSecretsReader(_settings: ISecretsReaderSettings): ISecrets
 
   async function readSecret(input: ISecretsReaderReadInput): Promise<ISecretsReaderReadOutput> {
     let data: Record<string, string> = {}, error: Error | null = null;
+    const { secretId, env = process.env } = input;
 
     try {
 
-      const client = new SecretsManagerClient({ region });
+      if (secretId in env && env[secretId] && typeof env[secretId] === 'string') {
+        // secret in env
 
-      const cmd = new GetSecretValueCommand({ SecretId: input.secretId });
-      const response = await client.send(cmd);
+        const secretInEnv = env[secretId] || '{}';
+        data = JSON.parse(secretInEnv) as Record<string, string>;
 
-      const secret = response.SecretString || '{}';
-      data = JSON.parse(secret) as Record<string, string>;
+      } else {
+        // find in AWS Secrets Manager
 
-      if (typeof data !== 'object' || Array.isArray(data)) {
-        throw new Error('Invalid secret for ' + input.secretId);
+        const client = new SecretsManagerClient({ region });
+
+        const cmd = new GetSecretValueCommand({ SecretId: secretId });
+        const response = await client.send(cmd);
+
+        const secret = response.SecretString || '{}';
+        data = JSON.parse(secret) as Record<string, string>;
+
+        if (typeof data !== 'object' || Array.isArray(data)) {
+          throw new Error('Invalid secret for ' + input.secretId);
+        }
       }
 
     } catch (err) {

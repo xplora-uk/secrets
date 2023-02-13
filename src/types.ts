@@ -1,3 +1,5 @@
+export type IEnvSettings = typeof process.env;
+
 export enum SecretsReaderKindEnum {
   AWS = 'aws',
 }
@@ -20,10 +22,9 @@ export interface ISecretsReaderSettings extends Record<string, string | undefine
   AWS_REGION           ?: string;
 }
 
-//export type ISecretsReaderSettingsRequired = Required<ISecretsReaderSettings>;
-
 export interface ISecretsReaderReadInput {
-  secretId: string;
+  secretId : string;
+  env     ?: IEnvSettings; // defaults to process.env
 }
 
 export interface ISecretsReaderReadOutput {
