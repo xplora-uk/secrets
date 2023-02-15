@@ -34,8 +34,15 @@ export function newAwsSecretsReader(_settings: ISecretsReaderSettings): ISecrets
         const secret = response.SecretString || '{}';
         data = JSON.parse(secret) as Record<string, string>;
 
-        if (typeof data !== 'object' || Array.isArray(data)) {
+        const dataIsObject = (typeof data === 'object') && !Array.isArray(data);
+        if (!dataIsObject) {
           throw new Error('Invalid secret for ' + input.secretId);
+        }
+
+        if (input.env && input.updateEnv && dataIsObject) {
+          for (let [k, v] of Object.entries(data)) {
+            input.env[k] = v;
+          }
         }
       }
 

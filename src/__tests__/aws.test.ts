@@ -27,5 +27,12 @@ describe('secrets reader for AWS', () => {
     expect(res.error instanceof Error).to.eq(true);
   });
 
+  it('should read existing secret in AWS and update env', async () => {
+    const env: Record<string, string> = {};
+    const res = await secretsReader1.readSecret({ secretId: 'test', env, updateEnv: true });
+    expect(res.error).to.eq(null);
+    expect(env.SECRET1).to.eq('test111');
+    expect(env.SECRET2).to.eq('test222');
+  });
 });
 

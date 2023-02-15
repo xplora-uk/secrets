@@ -23,8 +23,9 @@ export interface ISecretsReaderSettings extends Record<string, string | undefine
 }
 
 export interface ISecretsReaderReadInput {
-  secretId : string;
-  env     ?: IEnvSettings; // defaults to process.env
+  secretId  : string;
+  env      ?: IEnvSettings; // defaults to process.env
+  updateEnv?: boolean;
 }
 
 export interface ISecretsReaderReadOutput {

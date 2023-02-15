@@ -58,25 +58,26 @@ Current code coverage:
 
 ```plain
   secrets reader for AWS
-    ✔ should read existing secret in AWS (222ms)
+    ✔ should read existing secret in AWS (170ms)
     ✔ should read existing secret in env
-    ✔ should fail to read invalid secret (149ms)
+    ✔ should fail to read invalid secret (95ms)
+    ✔ should read existing secret in AWS and update env (137ms)
 
 
-  3 passing (376ms)
+  4 passing (407ms)
 
 -------------------|---------|----------|---------|---------|-------------------
 File               | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s 
 -------------------|---------|----------|---------|---------|-------------------
-All files          |   94.28 |    74.07 |     100 |   94.11 |                   
+All files          |   94.87 |    78.12 |     100 |   94.73 |                   
  src               |     100 |      100 |     100 |     100 |                   
   types.ts         |     100 |      100 |     100 |     100 |                   
  src/secrets       |    92.3 |       60 |     100 |    92.3 |                   
   constants.ts     |     100 |      100 |     100 |     100 |                   
   factory.ts       |      90 |       60 |     100 |      90 | 20                
   index.ts         |     100 |      100 |     100 |     100 |                   
- src/secrets/kinds |      95 |       75 |     100 |   94.73 |                   
-  aws.ts           |      95 |       75 |     100 |   94.73 | 38                
+ src/secrets/kinds |   95.83 |       80 |     100 |   95.65 |                   
+  aws.ts           |   95.83 |       80 |     100 |   95.65 | 39                
 -------------------|---------|----------|---------|---------|-------------------
 ```
 
@@ -101,10 +102,8 @@ import { newSecretsReader } from '@xplora-uk/secrets';
 const secretsReader = newSecretsReader({}); // defaults to aws
 //const secretsReader = newSecretsReader({ kind: 'aws' });
 
-// use
-const secret = await secretsReader.readSecret({ secretId: process.env.APP_ID });
+// use with side-effect on process.env
+const secret = await secretsReader.readSecret({ secretId: process.env.APP_ID, env: process.env, updateEnv: true });
 if (secret.error) console.error('failed to read secret', secret.error);
-
-// merge with process.env if needed
-const config = { ...process.env, ...secret.data };
+// also, secret.data contains secret object
 ```
