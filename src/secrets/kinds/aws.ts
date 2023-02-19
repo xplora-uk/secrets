@@ -12,37 +12,31 @@ export function newAwsSecretsReader(_settings: ISecretsReaderSettings): ISecrets
   const region = _settings.AWS_REGION ?? 'eu-central-1';
 
   async function readSecret(input: ISecretsReaderReadInput): Promise<ISecretsReaderReadOutput> {
-    let data: Record<string, string> = {}, error: Error | null = null;
+    let data: Record<string, string> = {}, error: Error | null = null, secret = '';
     const { secretId, env = process.env } = input;
 
     try {
 
-      if (secretId in env && env[secretId] && typeof env[secretId] === 'string') {
-        // secret in env
-
-        const secretInEnv = env[secretId] || '{}';
-        data = JSON.parse(secretInEnv) as Record<string, string>;
+      if ((secretId in env) && env[secretId] && (typeof env[secretId] === 'string')) {
+        secret = String(env[secretId]);
 
       } else {
         // find in AWS Secrets Manager
-
         const client = new SecretsManagerClient({ region });
-
         const cmd = new GetSecretValueCommand({ SecretId: secretId });
         const response = await client.send(cmd);
+        secret = response.SecretString || '';
+      }
 
-        const secret = response.SecretString || '{}';
-        data = JSON.parse(secret) as Record<string, string>;
+      if (secret === '') throw new Error('Secret not found: ' + input.secretId);
 
-        const dataIsObject = (typeof data === 'object') && !Array.isArray(data);
-        if (!dataIsObject) {
-          throw new Error('Invalid secret for ' + input.secretId);
-        }
+      data = JSON.parse(secret) as Record<string, string>;
+      const dataIsObject = data && (typeof data === 'object') && !Array.isArray(data);
+      if (!dataIsObject) throw new Error('Invalid secret: ' + input.secretId);
 
-        if (input.env && input.updateEnv && dataIsObject) {
-          for (let [k, v] of Object.entries(data)) {
-            input.env[k] = v;
-          }
+      if (input.env && input.updateEnv && dataIsObject) {
+        for (let [k, v] of Object.entries(data)) {
+          input.env[k] = v;
         }
       }
 

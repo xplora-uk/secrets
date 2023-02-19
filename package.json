@@ -1,6 +1,6 @@
 {
   "name": "@xplora-uk/secrets",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "shared secrets reader library",
   "main": "lib/index.js",
   "type": "commonjs",
