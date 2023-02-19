@@ -58,26 +58,33 @@ Current code coverage:
 
 ```plain
   secrets reader for AWS
-    ✔ should read existing secret in AWS (170ms)
-    ✔ should read existing secret in env
-    ✔ should fail to read invalid secret (95ms)
-    ✔ should read existing secret in AWS and update env (137ms)
+    ✔ should read existing secret in AWS
+    ✔ should read existing secret in AWS (207ms)
+    ✔ should read existing secret in AWS - with region - not found (136ms)
+    ✔ should read existing secret in env - invalid json
+    ✔ should read existing secret in env - not found (136ms)
+    ✔ should read existing secret in env - no update
+    ✔ should read existing secret in env - update
+    ✔ should fail to read invalid secret (118ms)
+    ✔ should read existing secret in AWS - no update env (127ms)
+    ✔ should read existing secret in AWS - update env (151ms)
+    ✔ should read existing secret in AWS and update env (160ms)
 
 
-  4 passing (407ms)
+  11 passing (1s)
 
 -------------------|---------|----------|---------|---------|-------------------
 File               | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s 
 -------------------|---------|----------|---------|---------|-------------------
-All files          |   94.87 |    78.12 |     100 |   94.73 |                   
+All files          |      95 |    87.09 |     100 |     100 |                   
  src               |     100 |      100 |     100 |     100 |                   
   types.ts         |     100 |      100 |     100 |     100 |                   
- src/secrets       |    92.3 |       60 |     100 |    92.3 |                   
+ src/secrets       |     100 |      100 |     100 |     100 |                   
   constants.ts     |     100 |      100 |     100 |     100 |                   
-  factory.ts       |      90 |       60 |     100 |      90 | 20                
+  factory.ts       |     100 |      100 |     100 |     100 |                   
   index.ts         |     100 |      100 |     100 |     100 |                   
- src/secrets/kinds |   95.83 |       80 |     100 |   95.65 |                   
-  aws.ts           |   95.83 |       80 |     100 |   95.65 | 39                
+ src/secrets/kinds |    92.3 |    84.61 |     100 |     100 |                   
+  aws.ts           |    92.3 |    84.61 |     100 |     100 | 28-31,35,46       
 -------------------|---------|----------|---------|---------|-------------------
 ```
 
