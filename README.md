@@ -59,32 +59,36 @@ Current code coverage:
 ```plain
   secrets reader for AWS
     ✔ should read existing secret in AWS
-    ✔ should read existing secret in AWS (207ms)
-    ✔ should read existing secret in AWS - with region - not found (136ms)
-    ✔ should read existing secret in env - invalid json
-    ✔ should read existing secret in env - not found (136ms)
+    ✔ should read existing secret in AWS (175ms)
+    ✔ should read existing secret in AWS - with region - not found (115ms)
+    ✔ should read existing secret in env - invalid json (132ms)
+    ✔ should read existing secret in env - not found
     ✔ should read existing secret in env - no update
     ✔ should read existing secret in env - update
-    ✔ should fail to read invalid secret (118ms)
-    ✔ should read existing secret in AWS - no update env (127ms)
-    ✔ should read existing secret in AWS - update env (151ms)
-    ✔ should read existing secret in AWS and update env (160ms)
+    ✔ should fail to read invalid secret (85ms)
+    ✔ should read existing secret in AWS - no update env (158ms)
+    ✔ should read existing secret in AWS - update env (163ms)
+    ✔ should read existing secret in AWS and update env (123ms)
 
 
-  11 passing (1s)
+  11 passing (967ms)
 
 -------------------|---------|----------|---------|---------|-------------------
 File               | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s 
 -------------------|---------|----------|---------|---------|-------------------
-All files          |      95 |    87.09 |     100 |     100 |                   
+All files          |    68.9 |    45.78 |   57.14 |   73.73 |                   
  src               |     100 |      100 |     100 |     100 |                   
   types.ts         |     100 |      100 |     100 |     100 |                   
- src/secrets       |     100 |      100 |     100 |     100 |                   
+ src/secrets       |   77.27 |       50 |      60 |   88.23 |                   
   constants.ts     |     100 |      100 |     100 |     100 |                   
-  factory.ts       |     100 |      100 |     100 |     100 |                   
+  factory.ts       |   86.66 |       40 |     100 |   86.66 | 21-22             
   index.ts         |     100 |      100 |     100 |     100 |                   
- src/secrets/kinds |    92.3 |    84.61 |     100 |     100 |                   
-  aws.ts           |    92.3 |    84.61 |     100 |     100 | 28-31,35,46       
+  utils.ts         |   69.23 |    52.94 |      50 |    87.5 | 32-35             
+ src/secrets/kinds |   61.42 |    42.37 |      50 |   63.33 |                   
+  aws.ts           |   95.23 |    81.25 |     100 |     100 | 25-27,38          
+  dotEnvFile.ts    |   18.75 |        0 |       0 |   21.42 | 8-29              
+  jsonFile.ts      |   18.75 |        0 |       0 |   21.42 | 8-29              
+  processEnv.ts    |     100 |       80 |     100 |     100 | 8,25              
 -------------------|---------|----------|---------|---------|-------------------
 ```
 

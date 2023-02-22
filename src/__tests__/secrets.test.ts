@@ -1,6 +1,6 @@
 import dotenv from 'dotenv';
 import { expect } from 'chai';
-import { newSecretsReader} from '../secrets';
+import { newSecretsReader } from '../secrets';
 
 dotenv.config();
 
@@ -8,7 +8,7 @@ describe('secrets reader for AWS', () => {
 
   const secretsReader1 = newSecretsReader({ kind: 'aws' });
   const secretsReader2 = newSecretsReader({ kind: 'aws', AWS_REGION: 'eu-west-1' });
-  const secretsReader3 = newSecretsReader({});
+  const secretsReader3 = newSecretsReader({ kind: 'process_env' });
 
   it('should read existing secret in AWS', async () => {
     let error: Error | null = null;
@@ -45,7 +45,7 @@ describe('secrets reader for AWS', () => {
 
   it('should read existing secret in env - not found', async () => {
     const env: Record<string, string> = {};
-    const res = await secretsReader1.readSecret({ secretId: 'my_app2', env, updateEnv: false });
+    const res = await secretsReader3.readSecret({ secretId: 'my_app2', env, updateEnv: false });
     expect(res.error instanceof Error).to.eq(true);
     expect('PASSWORD' in res.data).to.eq(false);
   });
@@ -55,7 +55,7 @@ describe('secrets reader for AWS', () => {
       ...process.env,
       my_app2: '{ "PASSWORD": "pass1234"}',
     };
-    const res = await secretsReader1.readSecret({ secretId: 'my_app2', env, updateEnv: false });
+    const res = await secretsReader3.readSecret({ secretId: 'my_app2', env, updateEnv: false });
     expect(res.error).to.eq(null);
     expect(res.data.PASSWORD).to.eq('pass1234');
   });
@@ -65,7 +65,7 @@ describe('secrets reader for AWS', () => {
       ...process.env,
       my_app2: '{ "PASSWORD": "pass1234"}',
     };
-    const res = await secretsReader1.readSecret({ secretId: 'my_app2', env, updateEnv: true });
+    const res = await secretsReader3.readSecret({ secretId: 'my_app2', env, updateEnv: true });
     expect(res.error).to.eq(null);
     expect(res.data.PASSWORD).to.eq('pass1234');
     expect(env['PASSWORD']).to.eq('pass1234');

@@ -1,7 +1,10 @@
 export type IEnvSettings = typeof process.env;
 
 export enum SecretsReaderKindEnum {
-  AWS = 'aws',
+  AWS         = 'aws',
+  DOT_ENV     = 'dot_env',
+  JSON_FILE   = 'json_file',
+  PROCESS_ENV = 'process_env',
 }
 
 export type ISecretsReaderKind = keyof typeof SecretsReaderKindEnum | SecretsReaderKindEnum | string;
@@ -23,12 +26,25 @@ export interface ISecretsReaderSettings extends Record<string, string | undefine
 }
 
 export interface ISecretsReaderReadInput {
-  secretId  : string;
-  env      ?: IEnvSettings; // defaults to process.env
+  /**
+   * 1. Name/ID of AWS Secret
+   * 2. path of .env file
+   * 3. path of _secrets.json file
+   */
+  secretId: string;
+
+  /**
+   * defaults to process.env
+   */
+  env?: IEnvSettings;
+
+  /**
+   * defaults to false
+   */
   updateEnv?: boolean;
 }
 
 export interface ISecretsReaderReadOutput {
-  data : Record<string, string>;
+  data : IEnvSettings;
   error: Error | null;
 }
