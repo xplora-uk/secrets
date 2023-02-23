@@ -1,9 +1,9 @@
 // local utility functions; not included in library
 
-import { IEnvSettings } from "../types";
+import { IEnvSettings } from '../types';
 
-export const nowIso = (d: Date): string => d.toISOString();
-export const nowTs  = (d: Date): number => d.getTime();
+export const nowIso = (d: Date = new Date()): string => d.toISOString();
+export const nowTs  = (d: Date = new Date()): number => d.getTime();
 
 export const isObject = (o: any): Boolean => o && (typeof o === 'object') && !Array.isArray(o);
 

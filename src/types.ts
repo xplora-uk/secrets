@@ -48,3 +48,46 @@ export interface ISecretsReaderReadOutput {
   data : IEnvSettings;
   error: Error | null;
 }
+
+export interface IBatchSecretsReaderInput {
+
+  /**
+   * defaults to '_defaults.env'
+   */
+  defaultEnvSettingsFile?: string;
+
+  /**
+   * defaults to '_sharedSecrets.json'
+   */
+  sharedSecretsJsonFile?: string;
+
+  /**
+   * defaults to 'shared'
+   */
+  sharedSecretIdOnAws?: string;
+
+  /**
+   * defaults to '_secrets.json'
+   */
+  appSecretsJsonFile?: string;
+
+  /**
+   * defaults to '{env.PROGRAM_NAME}'
+   */
+  appSecretIdOnAws?: string;
+
+  /**
+   * defaults to '.env'
+   */
+  dotEnvFile?: string;
+
+  /**
+   * defaults to process.env
+   * Note: side-effect on this input parameter
+   */
+  env?: IEnvSettings;
+}
+
+export interface IBatchSecretsReaderOutput {
+  errors: Array<Error>;
+}

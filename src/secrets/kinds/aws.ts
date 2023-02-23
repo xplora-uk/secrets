@@ -10,7 +10,7 @@ export function newAwsSecretsReader(_settings: ISecretsReaderSettings): ISecrets
   // credentials rely on AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY
   //const accessKeyId     = settings.AWS_ACCESS_KEY_ID ?? '';
   //const secretAccessKey = settings.AWS_SECRET_ACCESS_KEY ?? '';
-  const region = _settings.AWS_REGION ?? 'eu-central-1';
+  const region = _settings.AWS_REGION ?? 'eu-west-1';
 
   async function readSecret(input: ISecretsReaderReadInput): Promise<ISecretsReaderReadOutput> {
     let data: IEnvSettings = {}, error: Error | null = null, secret = '';

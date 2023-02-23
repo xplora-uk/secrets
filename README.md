@@ -57,39 +57,42 @@ npm run test:coverage
 Current code coverage:
 
 ```plain
+  secrets reader in batch
+    ✔ should read all secrets with default settings (494ms)
+
   secrets reader for AWS
     ✔ should read existing secret in AWS
-    ✔ should read existing secret in AWS (175ms)
-    ✔ should read existing secret in AWS - with region - not found (115ms)
-    ✔ should read existing secret in env - invalid json (132ms)
+    ✔ should read existing secret in AWS (130ms)
+    ✔ should read existing secret in AWS - with region - not found (287ms)
+    ✔ should read existing secret in env - invalid json (100ms)
     ✔ should read existing secret in env - not found
     ✔ should read existing secret in env - no update
     ✔ should read existing secret in env - update
-    ✔ should fail to read invalid secret (85ms)
-    ✔ should read existing secret in AWS - no update env (158ms)
-    ✔ should read existing secret in AWS - update env (163ms)
-    ✔ should read existing secret in AWS and update env (123ms)
+    ✔ should fail to read invalid secret (82ms)
+    ✔ should read existing secret in AWS - no update env (222ms)
+    ✔ should read existing secret in AWS - update env (196ms)
+    ✔ should read existing secret in AWS and update env (132ms)
 
 
-  11 passing (967ms)
+  12 passing (2s)
 
--------------------|---------|----------|---------|---------|-------------------
-File               | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s 
--------------------|---------|----------|---------|---------|-------------------
-All files          |    68.9 |    45.78 |   57.14 |   73.73 |                   
- src               |     100 |      100 |     100 |     100 |                   
-  types.ts         |     100 |      100 |     100 |     100 |                   
- src/secrets       |   77.27 |       50 |      60 |   88.23 |                   
-  constants.ts     |     100 |      100 |     100 |     100 |                   
-  factory.ts       |   86.66 |       40 |     100 |   86.66 | 21-22             
-  index.ts         |     100 |      100 |     100 |     100 |                   
-  utils.ts         |   69.23 |    52.94 |      50 |    87.5 | 32-35             
- src/secrets/kinds |   61.42 |    42.37 |      50 |   63.33 |                   
-  aws.ts           |   95.23 |    81.25 |     100 |     100 | 25-27,38          
-  dotEnvFile.ts    |   18.75 |        0 |       0 |   21.42 | 8-29              
-  jsonFile.ts      |   18.75 |        0 |       0 |   21.42 | 8-29              
-  processEnv.ts    |     100 |       80 |     100 |     100 | 8,25              
--------------------|---------|----------|---------|---------|-------------------
+-------------------|---------|----------|---------|---------|----------------------
+File               | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s    
+-------------------|---------|----------|---------|---------|----------------------
+All files          |    75.9 |    50.81 |   73.33 |   83.08 |                      
+ src               |     100 |      100 |     100 |     100 |                      
+  types.ts         |     100 |      100 |     100 |     100 |                      
+ src/secrets       |    77.9 |    52.54 |   66.66 |   85.71 |                      
+  batch.ts         |   76.74 |    54.28 |     100 |   81.08 | 29,38,44,50,56,67-70 
+  constants.ts     |     100 |      100 |     100 |     100 |                      
+  factory.ts       |   93.33 |       60 |     100 |   93.33 | 21                   
+  utils.ts         |   69.23 |    47.36 |      50 |    87.5 | 32-35                
+ src/secrets/kinds |      72 |    47.54 |      75 |   78.68 |                      
+  aws.ts           |   95.23 |    78.57 |     100 |     100 | 25-27,38             
+  dotEnvFile.ts    |   14.28 |        0 |       0 |      20 | 8-30                 
+  jsonFile.ts      |    87.5 |    46.15 |     100 |   92.85 | 23                   
+  processEnv.ts    |     100 |       80 |     100 |     100 | 8,25                 
+-------------------|---------|----------|---------|---------|----------------------
 ```
 
 ## USAGE

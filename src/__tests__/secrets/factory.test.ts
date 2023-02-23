@@ -1,13 +1,13 @@
 import dotenv from 'dotenv';
 import { expect } from 'chai';
-import { newSecretsReader } from '../secrets';
+import { newSecretsReader } from '../../secrets/factory';
 
 dotenv.config();
 
 describe('secrets reader for AWS', () => {
 
   const secretsReader1 = newSecretsReader({ kind: 'aws' });
-  const secretsReader2 = newSecretsReader({ kind: 'aws', AWS_REGION: 'eu-west-1' });
+  const secretsReader2 = newSecretsReader({ kind: 'aws', AWS_REGION: 'eu-west-2' });
   const secretsReader3 = newSecretsReader({ kind: 'process_env' });
 
   it('should read existing secret in AWS', async () => {
@@ -21,14 +21,14 @@ describe('secrets reader for AWS', () => {
   });
 
   it('should read existing secret in AWS', async () => {
-    const res = await secretsReader1.readSecret({ secretId: 'test' });
+    const res = await secretsReader1.readSecret({ secretId: 'my-test-app' });
     expect(res.error).to.eq(null);
     expect(res.data.SECRET1).to.eq('test111');
     expect(res.data.SECRET2).to.eq('test222');
   });
 
   it('should read existing secret in AWS - with region - not found', async () => {
-    const res = await secretsReader2.readSecret({ secretId: 'test' });
+    const res = await secretsReader2.readSecret({ secretId: 'my-test-app' });
     expect(res.error !== null).to.eq(true);
     expect('SECRET1' in res.data).to.eq(false);
   });
@@ -78,7 +78,7 @@ describe('secrets reader for AWS', () => {
 
   it('should read existing secret in AWS - no update env', async () => {
     const env: Record<string, string> = {};
-    const res = await secretsReader1.readSecret({ secretId: 'test', env, updateEnv: false });
+    const res = await secretsReader1.readSecret({ secretId: 'my-test-app', env, updateEnv: false });
     expect(res.error).to.eq(null);
     expect(res.data.SECRET1).to.eq('test111');
     expect(res.data.SECRET2).to.eq('test222');
@@ -86,7 +86,7 @@ describe('secrets reader for AWS', () => {
 
   it('should read existing secret in AWS - update env', async () => {
     const env: Record<string, string> = {};
-    const res = await secretsReader1.readSecret({ secretId: 'test', env, updateEnv: true });
+    const res = await secretsReader1.readSecret({ secretId: 'my-test-app', env, updateEnv: true });
     expect(res.error).to.eq(null);
     expect(res.data.SECRET1).to.eq('test111');
     expect(res.data.SECRET2).to.eq('test222');
@@ -95,7 +95,7 @@ describe('secrets reader for AWS', () => {
   });
   it('should read existing secret in AWS and update env', async () => {
     const env: Record<string, string> = {};
-    const res = await secretsReader1.readSecret({ secretId: 'test', env, updateEnv: true });
+    const res = await secretsReader1.readSecret({ secretId: 'my-test-app', env, updateEnv: true });
     expect(res.error).to.eq(null);
     expect(env.SECRET1).to.eq('test111');
     expect(env.SECRET2).to.eq('test222');

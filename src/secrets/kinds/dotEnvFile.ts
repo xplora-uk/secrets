@@ -11,16 +11,17 @@ export function newDotEnvSecretsReader(_settings: ISecretsReaderSettings): ISecr
     try {
 
       const result = dotenv.config({ path: secretId, override: false });
-      data = (result.parsed || {}) as IEnvSettings;
-
-      if (!isObject(data) || Object.getOwnPropertyNames(data).length === 0) throw new Error('Secret not found');
-
-      if (updateEnv && isObject(env)) {
-        shalllowMergeSettings(data, env);
+      if (result) {
+        if (result.parsed) data = result.parsed as IEnvSettings;
+        if (result.error) error = result.error;
       }
 
+      if (!isObject(data) || Object.getOwnPropertyNames(data).length === 0) throw new Error('Env file not found/parsed');
+
+      if (updateEnv && isObject(env)) shalllowMergeSettings(data, env);
+
     } catch (err) {
-      error = err instanceof Error ? err : null;
+      if (err instanceof Error ) error = err;
     }
 
     return { data, error };
