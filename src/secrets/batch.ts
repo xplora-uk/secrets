@@ -15,7 +15,6 @@ export async function batchReadSecrets(input: IBatchSecretsReaderInput): Promise
     appSecretsJsonFile     = '_secrets.json',       // load order 4
     dotEnvFile             = '.env',                // load order 6
   } = input;
-  const { appSecretIdOnAws = env['PROGRAM_NAME'] || '' } = input; // load order 5
 
   try {
     if (existsSync(defaultEnvSettingsFile)) {
@@ -29,8 +28,11 @@ export async function batchReadSecrets(input: IBatchSecretsReaderInput): Promise
       errors.push(new Error('Missing default env settings file: ' + defaultEnvSettingsFile));
     }
 
-    const awsReader = newSecretsReader({ kind: 'aws' });
-    const jsonReader = newSecretsReader({ kind: 'json_file' });
+    // now env is possibly updated
+    const { appSecretIdOnAws = env['PROGRAM_NAME'] || '' } = input; // load order 5
+
+    const jsonReader = newSecretsReader({ kind: 'json_file', ...env });
+    const awsReader  = newSecretsReader({ kind: 'aws', ...env });
 
     // LOAD 2: read shared secret from local file
     const sharedJsonResult = await jsonReader.readSecret({ secretId: sharedSecretsJsonFile, env, updateEnv });

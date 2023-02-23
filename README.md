@@ -58,20 +58,20 @@ Current code coverage:
 
 ```plain
   secrets reader in batch
-    ✔ should read all secrets with default settings (494ms)
+    ✔ should read all secrets with default settings (460ms)
 
   secrets reader for AWS
     ✔ should read existing secret in AWS
-    ✔ should read existing secret in AWS (130ms)
-    ✔ should read existing secret in AWS - with region - not found (287ms)
-    ✔ should read existing secret in env - invalid json (100ms)
+    ✔ should read existing secret in AWS (232ms)
+    ✔ should read existing secret in AWS - with region - not found (98ms)
+    ✔ should read existing secret in env - invalid json (135ms)
     ✔ should read existing secret in env - not found
     ✔ should read existing secret in env - no update
     ✔ should read existing secret in env - update
-    ✔ should fail to read invalid secret (82ms)
-    ✔ should read existing secret in AWS - no update env (222ms)
-    ✔ should read existing secret in AWS - update env (196ms)
-    ✔ should read existing secret in AWS and update env (132ms)
+    ✔ should fail to read invalid secret (255ms)
+    ✔ should read existing secret in AWS - no update env (121ms)
+    ✔ should read existing secret in AWS - update env (186ms)
+    ✔ should read existing secret in AWS and update env (388ms)
 
 
   12 passing (2s)
@@ -83,7 +83,7 @@ All files          |    75.9 |    50.81 |   73.33 |   83.08 |
  src               |     100 |      100 |     100 |     100 |                      
   types.ts         |     100 |      100 |     100 |     100 |                      
  src/secrets       |    77.9 |    52.54 |   66.66 |   85.71 |                      
-  batch.ts         |   76.74 |    54.28 |     100 |   81.08 | 29,38,44,50,56,67-70 
+  batch.ts         |   76.74 |    54.28 |     100 |   81.08 | 28,40,46,52,58,69-72 
   constants.ts     |     100 |      100 |     100 |     100 |                      
   factory.ts       |   93.33 |       60 |     100 |   93.33 | 21                   
   utils.ts         |   69.23 |    47.36 |      50 |    87.5 | 32-35                
@@ -121,3 +121,14 @@ const secret = await secretsReader.readSecret({ secretId: process.env.APP_ID, en
 if (secret.error) console.error('failed to read secret', secret.error);
 // also, secret.data contains secret object
 ```
+
+### batch reader
+
+1. Load `_defaults.env` file.
+2. Load `_sharedSecrets.json`, if it was injected by CI/CD script.
+3. Load `shared` secret from AWS, if it exists.
+4. Load `_secrets.json` file, if it was injected by CI/CD script.
+5. Load `{env.PROGRAM_NAME}` secret from AWS, if it exists.
+6. Load `.env` file, if it exists. Developers can copy default settings and override.
+
+In each step, we will merge settings found into `process.env`.
