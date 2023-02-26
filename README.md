@@ -23,12 +23,12 @@ Check code inside `src`.
 
 ### requirements for dev
 
-* Node v16+
+* Node v16.x
 
 ### install, build, configure, test
 
 ```sh
-npm run install
+npm i
 npm run build
 ```
 
@@ -99,7 +99,7 @@ All files          |    75.9 |    50.81 |   73.33 |   83.08 |
 
 ### requirements for usage
 
-* Node v14+
+* Node v14.x
 
 ### installation
 
