@@ -14,7 +14,7 @@ export const isObject = (o: any): Boolean => o && (typeof o === 'object') && !Ar
  * @param dest 
  * @returns {void}
  */
-export function shalllowMergeSettings(src: IEnvSettings| null = {}, dest: IEnvSettings = {}) {
+export function shallowMergeSettings(src: IEnvSettings| null = {}, dest: IEnvSettings = {}) {
   if (!src) throw new Error('Invalid source settings');
   if (!dest) throw new Error('Invalid env settings');
 

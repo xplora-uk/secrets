@@ -3,7 +3,7 @@
 // https://docs.aws.amazon.com/sdk-for-javascript/v3/developer-guide/getting-started.html
 import { SecretsManagerClient, GetSecretValueCommand } from '@aws-sdk/client-secrets-manager';
 import { IEnvSettings, ISecretsReader, ISecretsReaderReadInput, ISecretsReaderReadOutput, ISecretsReaderSettings } from '../../types';
-import { isObject, shalllowMergeSettings } from '../utils';
+import { isObject, shallowMergeSettings } from '../utils';
 
 export function newAwsSecretsReader(_settings: ISecretsReaderSettings): ISecretsReader {
 
@@ -29,7 +29,7 @@ export function newAwsSecretsReader(_settings: ISecretsReaderSettings): ISecrets
       data = JSON.parse(secret) as Record<string, string>;
 
       if (updateEnv && isObject(env)) {
-        shalllowMergeSettings(data, env);
+        shallowMergeSettings(data, env);
       }
 
     } catch (err) {

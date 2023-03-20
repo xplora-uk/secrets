@@ -1,5 +1,5 @@
 import { IEnvSettings, ISecretsReader, ISecretsReaderReadInput, ISecretsReaderReadOutput, ISecretsReaderSettings } from '../../types';
-import { isObject, shalllowMergeSettings } from '../utils';
+import { isObject, shallowMergeSettings } from '../utils';
 
 export function newProcessEnvSecretsReader(_settings: ISecretsReaderSettings): ISecretsReader {
 
@@ -18,7 +18,7 @@ export function newProcessEnvSecretsReader(_settings: ISecretsReaderSettings): I
       data = JSON.parse(secret) as IEnvSettings;
 
       if (updateEnv && isObject(env)) {
-        shalllowMergeSettings(data, env);
+        shallowMergeSettings(data, env);
       }
 
     } catch (err) {

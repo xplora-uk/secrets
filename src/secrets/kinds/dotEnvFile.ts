@@ -1,6 +1,6 @@
 import dotenv from 'dotenv';
 import { IEnvSettings, ISecretsReader, ISecretsReaderReadInput, ISecretsReaderReadOutput, ISecretsReaderSettings } from '../../types';
-import { isObject, shalllowMergeSettings } from '../utils';
+import { isObject, shallowMergeSettings } from '../utils';
 
 export function newDotEnvSecretsReader(_settings: ISecretsReaderSettings): ISecretsReader {
 
@@ -18,7 +18,7 @@ export function newDotEnvSecretsReader(_settings: ISecretsReaderSettings): ISecr
 
       if (!isObject(data) || Object.getOwnPropertyNames(data).length === 0) throw new Error('Env file not found/parsed');
 
-      if (updateEnv && isObject(env)) shalllowMergeSettings(data, env);
+      if (updateEnv && isObject(env)) shallowMergeSettings(data, env);
 
     } catch (err) {
       if (err instanceof Error ) error = err;

@@ -1,6 +1,6 @@
 import { readFileSync } from 'fs';
 import { IEnvSettings, ISecretsReader, ISecretsReaderReadInput, ISecretsReaderReadOutput, ISecretsReaderSettings } from '../../types';
-import { isObject, shalllowMergeSettings } from '../utils';
+import { isObject, shallowMergeSettings } from '../utils';
 
 export function newJsonFileReader(_settings: ISecretsReaderSettings): ISecretsReader {
 
@@ -16,7 +16,7 @@ export function newJsonFileReader(_settings: ISecretsReaderSettings): ISecretsRe
       if (!isObject(data) || Object.getOwnPropertyNames(data).length === 0) throw new Error('Secret not found');
 
       if (updateEnv && isObject(env)) {
-        shalllowMergeSettings(data, env);
+        shallowMergeSettings(data, env);
       }
 
     } catch (err) {

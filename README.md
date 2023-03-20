@@ -124,11 +124,22 @@ if (secret.error) console.error('failed to read secret', secret.error);
 
 ### batch reader
 
+Sample:
+
+```ts
+const env: IEnvSettings = {
+  ...process.env, // use a copy of process.env, if you do not change it!
+  PROGRAM_NAME: 'my-test-app',
+};
+const { errors } = await batchReadSecrets({ env }); // note side-effect on env
+```
+
 1. Load `_defaults.env` file.
 2. Load `_sharedSecrets.json`, if it was injected by CI/CD script.
 3. Load `shared` secret from AWS, if it exists.
 4. Load `_secrets.json` file, if it was injected by CI/CD script.
 5. Load `{env.PROGRAM_NAME}` secret from AWS, if it exists.
 6. Load `.env` file, if it exists. Developers can copy default settings and override.
+7. Expand variables using [dotenv-expand](https://www.npmjs.com/package/dotenv).
 
-In each step, we will merge settings found into `process.env`.
+In each step, we will merge settings found into `env` object.
