@@ -23,7 +23,7 @@ Check code inside `src`.
 
 ### requirements for dev
 
-* Node v16.x
+* Node v18.x
 
 ### install, build, configure, test
 
@@ -99,7 +99,7 @@ All files          |    75.9 |    50.81 |   73.33 |   83.08 |
 
 ### requirements for usage
 
-* Node v14.x
+* Node v18.x
 
 ### installation
 
