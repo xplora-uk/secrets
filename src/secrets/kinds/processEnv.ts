@@ -4,7 +4,7 @@ import { isObject, shallowMergeSettings } from '../utils';
 export function newProcessEnvSecretsReader(_settings: ISecretsReaderSettings): ISecretsReader {
 
   async function readSecret(input: ISecretsReaderReadInput): Promise<ISecretsReaderReadOutput> {
-    let data: IEnvSettings = {}, error: Error | null = null, secret = '';
+    let parsed: IEnvSettings = {}, error: Error | null = null, secret = '';
     const { secretId, env = process.env, updateEnv = false } = input;
 
     try {
@@ -15,17 +15,17 @@ export function newProcessEnvSecretsReader(_settings: ISecretsReaderSettings): I
 
       if (secret === '') throw new Error('Secret not found: ' + secretId);
 
-      data = JSON.parse(secret) as IEnvSettings;
+      parsed = JSON.parse(secret) as IEnvSettings;
 
       if (updateEnv && isObject(env)) {
-        shallowMergeSettings(data, env);
+        shallowMergeSettings(parsed, env);
       }
 
     } catch (err) {
       error = err instanceof Error ? err : null;
     }
 
-    return { data, error };
+    return { parsed, error };
   }
 
   return {

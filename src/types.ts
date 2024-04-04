@@ -45,8 +45,8 @@ export interface ISecretsReaderReadInput {
 }
 
 export interface ISecretsReaderReadOutput {
-  data : IEnvSettings;
-  error: Error | null;
+  parsed: IEnvSettings;
+  error : Error | null;
 }
 
 export interface IBatchSecretsReaderInput {

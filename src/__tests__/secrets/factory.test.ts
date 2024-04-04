@@ -1,5 +1,6 @@
 import dotenv from 'dotenv';
-import { expect } from 'chai';
+import { strictEqual } from 'node:assert';
+import { describe, it } from 'node:test';
 import { newSecretsReader } from '../../secrets/factory';
 
 dotenv.config();
@@ -17,20 +18,20 @@ describe('secrets reader for AWS', () => {
     } catch (err) {
       error = err instanceof Error ? err : null;
     }
-    expect(error instanceof Error).to.eq(true);
+    strictEqual(error instanceof Error, true);
   });
 
   it('should read existing secret in AWS', async () => {
     const res = await secretsReader1.readSecret({ secretId: 'my-test-app' });
-    expect(res.error).to.eq(null);
-    expect(res.data.SECRET1).to.eq('test111');
-    expect(res.data.SECRET2).to.eq('test222');
+    strictEqual(res.error, null);
+    strictEqual(res.parsed.SECRET1, 'test111');
+    strictEqual(res.parsed.SECRET2, 'test222');
   });
 
   it('should read existing secret in AWS - with region - not found', async () => {
     const res = await secretsReader2.readSecret({ secretId: 'my-test-app' });
-    expect(res.error !== null).to.eq(true);
-    expect('SECRET1' in res.data).to.eq(false);
+    strictEqual(res.error !== null, true);
+    strictEqual('SECRET1' in res.parsed, false);
   });
 
   it('should read existing secret in env - invalid json', async () => {
@@ -39,15 +40,15 @@ describe('secrets reader for AWS', () => {
       my_app2: '{',
     };
     const res = await secretsReader1.readSecret({ secretId: 'my_app2', env, updateEnv: false });
-    expect(res.error instanceof Error).to.eq(true);
-    expect('PASSWORD' in res.data).to.eq(false);
+    strictEqual(res.error instanceof Error, true);
+    strictEqual('PASSWORD' in res.parsed, false);
   });
 
   it('should read existing secret in env - not found', async () => {
     const env: Record<string, string> = {};
     const res = await secretsReader3.readSecret({ secretId: 'my_app2', env, updateEnv: false });
-    expect(res.error instanceof Error).to.eq(true);
-    expect('PASSWORD' in res.data).to.eq(false);
+    strictEqual(res.error instanceof Error, true);
+    strictEqual('PASSWORD' in res.parsed, false);
   });
 
   it('should read existing secret in env - no update', async () => {
@@ -56,8 +57,8 @@ describe('secrets reader for AWS', () => {
       my_app2: '{ "PASSWORD": "pass1234"}',
     };
     const res = await secretsReader3.readSecret({ secretId: 'my_app2', env, updateEnv: false });
-    expect(res.error).to.eq(null);
-    expect(res.data.PASSWORD).to.eq('pass1234');
+    strictEqual(res.error, null);
+    strictEqual(res.parsed.PASSWORD, 'pass1234');
   });
 
   it('should read existing secret in env - update', async () => {
@@ -66,39 +67,39 @@ describe('secrets reader for AWS', () => {
       my_app2: '{ "PASSWORD": "pass1234"}',
     };
     const res = await secretsReader3.readSecret({ secretId: 'my_app2', env, updateEnv: true });
-    expect(res.error).to.eq(null);
-    expect(res.data.PASSWORD).to.eq('pass1234');
-    expect(env['PASSWORD']).to.eq('pass1234');
+    strictEqual(res.error, null);
+    strictEqual(res.parsed.PASSWORD, 'pass1234');
+    strictEqual(env['PASSWORD'], 'pass1234');
   });
 
   it('should fail to read invalid secret', async () => {
     const res = await secretsReader2.readSecret({ secretId: 'test1234' });
-    expect(res.error instanceof Error).to.eq(true);
+    strictEqual(res.error instanceof Error, true);
   });
 
   it('should read existing secret in AWS - no update env', async () => {
     const env: Record<string, string> = {};
     const res = await secretsReader1.readSecret({ secretId: 'my-test-app', env, updateEnv: false });
-    expect(res.error).to.eq(null);
-    expect(res.data.SECRET1).to.eq('test111');
-    expect(res.data.SECRET2).to.eq('test222');
+    strictEqual(res.error, null);
+    strictEqual(res.parsed.SECRET1, 'test111');
+    strictEqual(res.parsed.SECRET2, 'test222');
   });
 
   it('should read existing secret in AWS - update env', async () => {
     const env: Record<string, string> = {};
     const res = await secretsReader1.readSecret({ secretId: 'my-test-app', env, updateEnv: true });
-    expect(res.error).to.eq(null);
-    expect(res.data.SECRET1).to.eq('test111');
-    expect(res.data.SECRET2).to.eq('test222');
-    expect(env.SECRET1).to.eq('test111');
-    expect(env.SECRET2).to.eq('test222');
+    strictEqual(res.error, null);
+    strictEqual(res.parsed.SECRET1, 'test111');
+    strictEqual(res.parsed.SECRET2, 'test222');
+    strictEqual(env.SECRET1, 'test111');
+    strictEqual(env.SECRET2, 'test222');
   });
   it('should read existing secret in AWS and update env', async () => {
     const env: Record<string, string> = {};
     const res = await secretsReader1.readSecret({ secretId: 'my-test-app', env, updateEnv: true });
-    expect(res.error).to.eq(null);
-    expect(env.SECRET1).to.eq('test111');
-    expect(env.SECRET2).to.eq('test222');
+    strictEqual(res.error, null);
+    strictEqual(env.SECRET1, 'test111');
+    strictEqual(env.SECRET2, 'test222');
   });
 });
 

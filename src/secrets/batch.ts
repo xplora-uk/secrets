@@ -1,10 +1,7 @@
-import { config } from 'dotenv';
-import { expand } from 'dotenv-expand';
-import { existsSync } from 'fs';
+import { expand, DotenvPopulateInput as DotenvPopulateInputX } from 'dotenv-expand';
 
-import { IBatchSecretsReaderInput, IBatchSecretsReaderOutput } from '../types';
+import { IBatchSecretsReaderInput, IBatchSecretsReaderOutput, SecretsReaderKindEnum } from '../types';
 import { newSecretsReader } from './factory';
-import { shallowMergeSettings } from './utils';
 
 export async function batchReadSecrets(input: IBatchSecretsReaderInput): Promise<IBatchSecretsReaderOutput> {
   const errors: Array<Error> = [], updateEnv = true;
@@ -13,68 +10,61 @@ export async function batchReadSecrets(input: IBatchSecretsReaderInput): Promise
     defaultEnvSettingsFile = '_defaults.env',       // load order 1
     sharedSecretsJsonFile  = '_sharedSecrets.json', // load order 2
     sharedSecretIdOnAws    = 'shared',              // load order 3
-    appSecretsJsonFile     = '_secrets.json',       // load order 4
+    appSecretsJsonFile     = '_secrets.json',       // load order 4, 5 is from AWS
     dotEnvFile             = '.env',                // load order 6
   } = input;
 
+  const dotEnvFileReader = newSecretsReader({ kind: SecretsReaderKindEnum.DOT_ENV });
+  const jsonReader = newSecretsReader({ kind: 'json_file', ...env });
+
   try {
-    if (existsSync(defaultEnvSettingsFile)) {
-      // 1: parse _defaults.env file
-      const result1 = config({ path: defaultEnvSettingsFile, override: false });
-      if (result1) {
-        if (result1.parsed) shallowMergeSettings(result1.parsed, env);
-        if (result1.error) errors.push(new Error('Failed to load default env settings: ' + result1.error.message));
+    
+    // 1: parse _defaults.env file
+    const result1 = await dotEnvFileReader.readSecret({ secretId: defaultEnvSettingsFile, env, updateEnv });
+    if (result1) {
+      if (result1.error) {
+        errors.push(new Error('Failed to load default env settings: ' + result1.error.message));
       }
-    } else {
-      errors.push(new Error('Missing default env settings file: ' + defaultEnvSettingsFile));
     }
 
     // now env is possibly updated
-    const { appSecretIdOnAws = env['PROGRAM_NAME'] || '' } = input; // load order 5
-
-    const jsonReader = newSecretsReader({ kind: 'json_file', ...env });
-    const awsReader  = newSecretsReader({ kind: 'aws', ...env });
+    const { appSecretIdOnAws = env['PROGRAM_NAME'] || '' } = input; // for loader order 5
+    const awsReader = newSecretsReader({ kind: 'aws', ...env });
 
     // 2: read shared secret from local file
-    const sharedJsonResult = await jsonReader.readSecret({ secretId: sharedSecretsJsonFile, env, updateEnv });
-    if (sharedJsonResult.error) {
-      errors.push(new Error('Failed to read shared secret JSON file: ' + sharedJsonResult.error.message));
+    const result2 = await jsonReader.readSecret({ secretId: sharedSecretsJsonFile, env, updateEnv });
+    if (result2.error) {
+      errors.push(new Error('Failed to read shared secret JSON file: ' + result2.error.message));
     }
 
     // 3: read shared secret from AWS
-    const secretShared = await awsReader.readSecret({ secretId: sharedSecretIdOnAws, env, updateEnv });
-    if (secretShared.error) {
-      errors.push(new Error('Failed to read shared secret (' + sharedSecretIdOnAws + '): ' + secretShared.error.message));
+    const result3 = await awsReader.readSecret({ secretId: sharedSecretIdOnAws, env, updateEnv });
+    if (result3 && result3.error) {
+      errors.push(new Error('Failed to read shared secret (' + sharedSecretIdOnAws + '): ' + result3.error.message));
     }
 
     // 4: read secret from local file for this app
-    const secretsJsonResult = await jsonReader.readSecret({ secretId: appSecretsJsonFile, env, updateEnv });
-    if (secretsJsonResult.error) {
-      errors.push(new Error('Failed to read app secret JSON file: ' + secretsJsonResult.error.message));
+    const result4 = await jsonReader.readSecret({ secretId: appSecretsJsonFile, env, updateEnv });
+    if (result4 && result4.error) {
+      errors.push(new Error('Failed to read app secret JSON file: ' + result4.error.message));
     }
 
     // 5: read secret from AWS for this app
-    const secret = await awsReader.readSecret({ secretId: appSecretIdOnAws, env, updateEnv });
-    if (secret.error) {
-      errors.push(new Error('Failed to read app secret (' + appSecretIdOnAws + ') on AWS: ' + secret.error.message ));
+    const result5 = await awsReader.readSecret({ secretId: appSecretIdOnAws, env, updateEnv });
+    if (result5 && result5.error) {
+      errors.push(new Error('Failed to read app secret (' + appSecretIdOnAws + ') on AWS: ' + result5.error.message ));
     }
 
     // 6: parse .env if it exists on local dev machine
-    if (existsSync(dotEnvFile)) {
-      const result2 = config({ path: dotEnvFile, override: false });
-      if (result2) {
-        if (result2.parsed) shallowMergeSettings(result2.parsed, env);
-        if (result2.error) errors.push(new Error('Failed to load default env settings: ' + result2.error.message));
-      }
-    } else {
-      errors.push(new Error('Missing env settings file: ' + dotEnvFile));
+    const result6 = await dotEnvFileReader.readSecret({ secretId: dotEnvFile, env, updateEnv });
+    if (result6 && result6.error) {
+      errors.push(new Error('Failed to load default env settings: ' + result6.error.message));
     }
 
     // 7: expand variables
-    const result3 = expand({ parsed: env as Record<string, string> });
-    if (result3) {
-      if (result3.parsed) shallowMergeSettings(result3.parsed, env);
-      if (result3.error) errors.push(new Error('Failed to load default env settings: ' + result3.error.message));
+    const result7 = expand({ parsed: env as Record<string, string>, processEnv: env as DotenvPopulateInputX });
+    if (result7 && result7.error) {
+      errors.push(new Error('Failed to load default env settings: ' + result7.error.message));
     }
 
   } catch (err) {

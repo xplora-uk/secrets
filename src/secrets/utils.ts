@@ -25,14 +25,10 @@ export function shallowMergeSettings(src: IEnvSettings| null = {}, dest: IEnvSet
   if (!destIsObject) throw new Error('Invalid env settings');
 
   for (let [k, v] of Object.entries(src)) {
-    if (typeof k === 'string') {
-      if (typeof v === 'string') {
-        dest[k] = v;
-      } else {
-        throw new Error('Invalid env setting for key: ' + k)
-      }
+    if (typeof k === 'string' && typeof v === 'string') {
+      dest[k] = v;
     } else {
-      throw new Error('Invalid env setting key');
+      throw new Error('Invalid env setting key: ' + k);
     }
   }
 }

@@ -13,7 +13,7 @@ export function newAwsSecretsReader(_settings: ISecretsReaderSettings): ISecrets
   const region = _settings.AWS_REGION ?? 'eu-west-1';
 
   async function readSecret(input: ISecretsReaderReadInput): Promise<ISecretsReaderReadOutput> {
-    let data: IEnvSettings = {}, error: Error | null = null, secret = '';
+    let parsed: IEnvSettings = {}, error: Error | null = null, secret = '';
     const { secretId, env = process.env, updateEnv = false } = input;
 
     try {
@@ -26,10 +26,10 @@ export function newAwsSecretsReader(_settings: ISecretsReaderSettings): ISecrets
 
       if (secret === '') throw new Error('Secret not found: ' + input.secretId);
 
-      data = JSON.parse(secret) as Record<string, string>;
+      parsed = JSON.parse(secret) as Record<string, string>;
 
       if (updateEnv && isObject(env)) {
-        shallowMergeSettings(data, env);
+        shallowMergeSettings(parsed, env);
       }
 
     } catch (err) {
@@ -38,7 +38,7 @@ export function newAwsSecretsReader(_settings: ISecretsReaderSettings): ISecrets
       error = err instanceof Error ? err : null;
     }
 
-    return { data, error };
+    return { parsed, error };
   }
 
   return {

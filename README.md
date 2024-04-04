@@ -44,6 +44,7 @@ AWS_ACCESS_KEY_ID="key"
 AWS_SECRET_ACCESS_KEY="secret"
 AWS_REGION="eu-central-1"
 my_app='{ "PASSWORD": "pass1234" }'
+DB_HOST="${MYSQL_HOST}"
 ```
 
 Run tests:
@@ -52,47 +53,6 @@ Run tests:
 # check tests inside src/__tests__
 npm run test
 npm run test:coverage
-```
-
-Current code coverage:
-
-```plain
-  secrets reader in batch
-    ✔ should read all secrets with default settings (460ms)
-
-  secrets reader for AWS
-    ✔ should read existing secret in AWS
-    ✔ should read existing secret in AWS (232ms)
-    ✔ should read existing secret in AWS - with region - not found (98ms)
-    ✔ should read existing secret in env - invalid json (135ms)
-    ✔ should read existing secret in env - not found
-    ✔ should read existing secret in env - no update
-    ✔ should read existing secret in env - update
-    ✔ should fail to read invalid secret (255ms)
-    ✔ should read existing secret in AWS - no update env (121ms)
-    ✔ should read existing secret in AWS - update env (186ms)
-    ✔ should read existing secret in AWS and update env (388ms)
-
-
-  12 passing (2s)
-
--------------------|---------|----------|---------|---------|----------------------
-File               | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s    
--------------------|---------|----------|---------|---------|----------------------
-All files          |    75.9 |    50.81 |   73.33 |   83.08 |                      
- src               |     100 |      100 |     100 |     100 |                      
-  types.ts         |     100 |      100 |     100 |     100 |                      
- src/secrets       |    77.9 |    52.54 |   66.66 |   85.71 |                      
-  batch.ts         |   76.74 |    54.28 |     100 |   81.08 | 28,40,46,52,58,69-72 
-  constants.ts     |     100 |      100 |     100 |     100 |                      
-  factory.ts       |   93.33 |       60 |     100 |   93.33 | 21                   
-  utils.ts         |   69.23 |    47.36 |      50 |    87.5 | 32-35                
- src/secrets/kinds |      72 |    47.54 |      75 |   78.68 |                      
-  aws.ts           |   95.23 |    78.57 |     100 |     100 | 25-27,38             
-  dotEnvFile.ts    |   14.28 |        0 |       0 |      20 | 8-30                 
-  jsonFile.ts      |    87.5 |    46.15 |     100 |   92.85 | 23                   
-  processEnv.ts    |     100 |       80 |     100 |     100 | 8,25                 
--------------------|---------|----------|---------|---------|----------------------
 ```
 
 ## USAGE
